@@ -84,7 +84,7 @@ class Database:
         """
         logger.debug("Input to database: %s\tParams to database: %s", sql, params)
         cursor = self._connection.execute(sql, params)
-        logger.info(
+        logger.debug(
             "%s rows affected by %s statement",
             cursor.rowcount,
             sql.split(maxsplit=1)[0] if " " in sql else sql,
@@ -95,7 +95,7 @@ class Database:
         """
         Closes the database connection.
         """
-        logger.info("Flushing all changes to %s...", self.server)
+        logger.debug("Flushing all changes to %s...", self.server)
         self._connection.commit()
         logger.info("Closing %s connection...", self.server)
         if self.backup is not None:
