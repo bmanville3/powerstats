@@ -27,7 +27,6 @@ class MeetTable(Table[Meet]):
     def get_model_class(cls) -> Type[Meet]:
         return Meet
 
-
     def get_by_federation(self, value: str) -> list[Meet]:
         return self.get_all_from_attribute("Federation", value)
 

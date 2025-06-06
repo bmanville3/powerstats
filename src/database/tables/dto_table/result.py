@@ -52,7 +52,6 @@ class ResultTable(Table[Result]):
     def get_model_class(cls) -> Type[Result]:
         return Result
 
-
     def get_by_lifter_id(self, value: int) -> list[Result]:
         return self.get_all_from_attribute("lifter_id", value)
 

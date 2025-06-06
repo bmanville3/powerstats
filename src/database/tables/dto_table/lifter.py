@@ -25,7 +25,6 @@ class LifterTable(Table[Lifter]):
     def get_model_class(cls) -> Type[Lifter]:
         return Lifter
 
-
     def get_by_sex(self, value: str) -> list[Lifter]:
         return self.get_all_from_attribute("Sex", value)
 

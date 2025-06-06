@@ -87,7 +87,7 @@ class Table(ABC, Generic[T]):
         row = self.database.execute_no_commit(
             f"SELECT * FROM {table_name} WHERE id = ?", (id_,)
         )
-        logger.info("Got %s from %s in database", row, table_name)
+        logger.debug("Got %s from %s in database", row, table_name)
         if row is None or len(row) == 0:
             return None
         return self.get_model_class()(*row[0])
@@ -103,7 +103,7 @@ class Table(ABC, Generic[T]):
         table_name = self.get_table_name()
         try:
             self.database.execute(f"DELETE FROM {table_name} WHERE id = ?", (id_,))
-            logger.info("Successfully deleted id = %s from %s", id_, table_name)
+            logger.debug("Successfully deleted id = %s from %s", id_, table_name)
             return True
         except sqlite3.IntegrityError as ie:
             logger.exception(
@@ -122,7 +122,7 @@ class Table(ABC, Generic[T]):
         clazz = self.get_model_class()
         rows = self.database.execute_no_commit(f"SELECT * FROM {table_name}")
         ret_list = [clazz(*row) for row in rows] if rows else []
-        logger.info(
+        logger.debug(
             "Queried %s objects of type %s from the %s table",
             len(ret_list),
             clazz.__name__,
@@ -171,7 +171,7 @@ class Table(ABC, Generic[T]):
 
         rows = self.database.execute_no_commit(query, attribute_values)
         ret_list = [clazz(*row) for row in rows] if rows else []
-        logger.info(
+        logger.debug(
             "Queried %s objects of type %s from the %s table where %s",
             len(ret_list),
             clazz.__name__,
@@ -219,7 +219,7 @@ class Table(ABC, Generic[T]):
         rows = self.database.execute_no_commit(query, tuple(sql_values))
         ret_list = [clazz(*row) for row in rows] if rows else []
 
-        logger.info(
+        logger.debug(
             "Queried %s objects of type %s from %s where %s",
             len(ret_list),
             clazz.__name__,
@@ -257,12 +257,12 @@ class Table(ABC, Generic[T]):
 
         try:
             self.database.execute(query, attribute_values)
-            logger.info(
+            logger.debug(
                 "Inserted into %s (%s): %s", table_name, columns, attribute_values
             )
             return True
         except sqlite3.IntegrityError as ie:
-            logger.info("Integrity error while inserting into %s: %s", table_name, ie)
+            logger.debug("Integrity error while inserting into %s: %s", table_name, ie)
             return False
 
     def update(
@@ -307,7 +307,7 @@ class Table(ABC, Generic[T]):
 
         try:
             self.database.execute(query, params)
-            logger.info(
+            logger.debug(
                 "Updated %s table. Set (%s) to (%s) where (%s) = (%s)",
                 table_name,
                 ", ".join(attribute_names),
@@ -321,3 +321,16 @@ class Table(ABC, Generic[T]):
                 "Failed to update %s table with %s: %s", table_name, where_clause, ie
             )
             return False
+        
+    def get_head(self, n: int = 5) -> list[T]:
+        table_name = self.get_table_name()
+        clazz = self.get_model_class()
+        rows = self.database.execute_no_commit(f"SELECT * FROM {table_name} LIMIT {n}")
+        ret_list = [clazz(*row) for row in rows] if rows else []
+        logger.debug(
+            "Queried %s objects of type %s from the %s table",
+            len(ret_list),
+            clazz.__name__,
+            table_name,
+        )
+        return ret_list

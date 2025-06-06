@@ -196,5 +196,4 @@ class {self._python_class_name}Table(Table[{self._python_class_name}]):
     @classmethod
     def get_model_class(cls) -> Type[{self._python_class_name}]:
         return {self._python_class_name}
-
-    {method_str}'''
+{method_str}'''
