@@ -15,7 +15,7 @@ The scripts in [`powerstats/scripts/`](./scripts/) should be directly runnable w
 ## Getting started
 
 ### The Main File
-[`powerstats/src/main.py`](./src/main.py) is the main runner for this project. Please resort to it for running all anlyses. Pass the `--help` flag when running it to see what all can be done. It is recommended to run it like `python -m src.main` from the `powerstats/` directory.
+[`powerstats/src/main.py`](./src/main.py) is the main runner for this project. Please resort to it for running all analyses. Pass the `--help` flag when running it to see what all can be done. It is recommended to run it like `python -m src.main` from the `powerstats/` directory.
 
 ### Getting the dataset
 The dataset can be found at [https://openpowerlifting.gitlab.io/opl-csv/](https://openpowerlifting.gitlab.io/opl-csv/). For more information, see [`powerstats/data/README.md`](./data/README.md). For more links, see [`powerstats/data/raw/additional_links.md`](./data/raw/additional_links.md).
@@ -25,7 +25,7 @@ Besides from `main.py`, there are also some scripts at [`powerstats/scripts/`](.
 
 
 ### Dependencies
-All dependencies have been listed in [`requirements.txt`](./requirements.txt). For reproducability, the exact versions have also been given. Please install these dependencies before continuing.
+All dependencies have been listed in [`requirements.txt`](./requirements.txt). For reproducibility, the exact versions have also been given. Please install these dependencies before continuing.
 
 ### Pre-commit Set-up
 

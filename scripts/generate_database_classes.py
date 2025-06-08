@@ -135,7 +135,7 @@ def format_with_ruff(file_path: str | Path) -> None:
     try:
         subprocess.run(
             ["ruff", "check", file_path, "--no-cache", "--extend-select=I", "--fix"],
-            check=True
+            check=True,
         )
         logger.info(f"Formatted {file_path} successfully.")
     except subprocess.CalledProcessError as e:

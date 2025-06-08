@@ -163,7 +163,11 @@ class TableBuilder:
             methods.append(f'''
     def get_by_{col._python_variable_name}(self, value: {col._type.python_type()}) -> list[{self._python_class_name}]:
         return self.get_all_from_attribute("{col._name}", value)''')
-            if col._type in {ColumnBuilder.Type.REAL, ColumnBuilder.Type.INTEGER, ColumnBuilder.Type.TEXT}:
+            if col._type in {
+                ColumnBuilder.Type.REAL,
+                ColumnBuilder.Type.INTEGER,
+                ColumnBuilder.Type.TEXT,
+            }:
                 methods.append(f'''
     def get_where_{col._python_variable_name}_ge(self, value: {col._type.python_type()}) -> list[{self._python_class_name}]:
         return self.get_all_from_attributes_with_comparator((("{col._name}", Comparator.GE, value),))

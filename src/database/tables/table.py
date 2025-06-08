@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 
+
 class Comparator(Enum):
     EQ = "="
     NE = "!="
@@ -195,7 +196,7 @@ class Table(ABC, Generic[T]):
         Returns:
             list[T]: Matching objects.
         """
-        if len( selection) == 0:
+        if len(selection) == 0:
             return []
 
         table_name = self.get_table_name()
@@ -204,7 +205,7 @@ class Table(ABC, Generic[T]):
         conditions = []
         sql_values = []
 
-        for name, comp, value in  selection:
+        for name, comp, value in selection:
             if comp == Comparator.IN:
                 placeholders = ", ".join("?" for _ in value)
                 conditions.append(f"{name} IN ({placeholders})")
@@ -321,7 +322,7 @@ class Table(ABC, Generic[T]):
                 "Failed to update %s table with %s: %s", table_name, where_clause, ie
             )
             return False
-        
+
     def get_head(self, n: int = 5) -> list[T]:
         table_name = self.get_table_name()
         clazz = self.get_model_class()
