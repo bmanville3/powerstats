@@ -5,7 +5,6 @@ from typing import Iterable
 import matplotlib.pyplot as plt
 
 from src.database.database import Database
-from src.database.tables.dto_table.lifter import LifterTable
 from src.database.tables.dto_table.result import ResultTable
 from src.models.dto.result import Result
 from src.utils import find_dir, get_lb_from_kg
@@ -26,7 +25,7 @@ def plot_all_distributions(results: list[Result], prefixes: list[str]) -> None:
     ]
 
     fig, axes = plt.subplots(2, 2, figsize=(15, 10))
-    fig.suptitle(f"{' - '.join(prefixes)} - Distribution of Lifts", fontsize=16)
+    fig.suptitle(f"{' - '.join(prefixes)} - Distribution of Lifts (Raw SBD)", fontsize=16)
 
     for ax, (attribute, xlabel) in zip(axes.flat, attributes):
         values = extract_valid([getattr(r, attribute) for r in results])
@@ -68,55 +67,31 @@ def plot_all_distributions(results: list[Result], prefixes: list[str]) -> None:
 def main() -> None:
     database = Database()
     result_table = ResultTable(database)
-    lifter_table = LifterTable(database)
-    id_to_sex = {lifter.lifter_id: lifter.sex for lifter in lifter_table.get_all()}
-    types_of_sex = set(id_to_sex.values())
-    assert len(types_of_sex) == 3
-    assert "Mx" in types_of_sex and "M" in types_of_sex and "F" in types_of_sex
 
     sexes = [("M", "Male"), ("F", "Female"), ("Mx", "Mx")]
-    equipment_types = [
-        ("Raw", "Raw"),
-        ("Wraps", "Wraps"),
-        ("Single-ply", "Single-ply"),
-        ("Multi-ply", "Multi-ply"),
-    ]
-    tested_cat = [("Yes", "Tested"), (None, "Untested")]
-    event_type = [("SBD", "Full Power"), (None, "Any Event Type")]
+    tested_cat = [("yes", "Tested"), ("no", "Untested")]
 
-    combo_len = len(sexes) * len(equipment_types) * len(tested_cat) * len(event_type)
+    combo_len = len(sexes) * len(tested_cat)
 
     full_results = result_table.get_all()
     i = 0
     for sex, sex_name in sexes:
         gen_results: list[Result] = list(
-            filter(lambda res: id_to_sex[res.lifter_id] == sex, full_results)
+            filter(lambda res: res.sex == sex, full_results)
         )
-        for eq_t, eq_name in equipment_types:
-            eq_gen_results: list[Result] = list(
-                filter(lambda res: res.equipment == eq_t, gen_results)
+        for tested, tested_name in tested_cat:
+            tested_eq_gen_results: list[Result] = list(
+                filter(lambda res: res.tested == tested, gen_results)
             )
-            for tested, tested_name in tested_cat:
-                tested_eq_gen_results: list[Result] = list(
-                    filter(lambda res: res.tested == tested, eq_gen_results)
-                )
-                for ev_t, ev_name in event_type:
-                    event_tested_eq_gen_results: list[Result]
-                    if ev_t is not None:
-                        event_tested_eq_gen_results = list(
-                            filter(lambda res: res.event == ev_t, tested_eq_gen_results)
-                        )
-                    else:
-                        event_tested_eq_gen_results = tested_eq_gen_results
-                    filters = [eq_name, ev_name, tested_name, sex_name]
-                    logger.info(
-                        "Graphing distribution %d/%d. Filters: %s",
-                        i + 1,
-                        combo_len,
-                        filters,
-                    )
-                    plot_all_distributions(event_tested_eq_gen_results, filters)
-                    i += 1
+            filters = [tested_name, sex_name]
+            logger.info(
+                "Graphing distribution %d/%d. Filters: %s",
+                i + 1,
+                combo_len,
+                filters,
+            )
+            plot_all_distributions(tested_eq_gen_results, filters)
+            i += 1
 
 
 if __name__ == "__main__":

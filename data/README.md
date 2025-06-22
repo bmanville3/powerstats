@@ -44,5 +44,8 @@ You can find example data under [`powerstats/data/sqlite/sqlite_example.md`](sql
 ## usapl_drug_testing_results
 
 This folder contains drug testing results from USAPL doping database [https://www.usapowerlifting.com/drug-testing/](https://www.usapowerlifting.com/drug-testing/).
-In this folder, there is a collection of csv from 2018-2025 containing if lifters passed or failed a drug test.
-[get_known_ped_users.py](../scripts/get_known_ped_users.py) in the [`scripts/`](../scripts/) cross references these individuals with the open powerlifting database.
+In this folder, there is a collection of csv from 2018-2025 containing if lifters passed or failed a drug test. The data we are concerned with in each row is the
+lifter's name, if they passed or failed, and the date. [get_known_ped_users.py](../scripts/get_known_ped_users.py) in the [`scripts/`](../scripts/) cross references
+this data with the open powerlifting database to create testing data.
+
+If you wish to see example data, open one of the csvs in the directory (they are quite small and easy to digest).

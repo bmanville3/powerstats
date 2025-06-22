@@ -10,7 +10,9 @@ logger = logging.getLogger(__name__)
 
 def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
     trained_models: dict[str, BaseNetwork] = {}
-    powerstats_dir = find_dir("trained_models")
+    trained_models_dir = find_dir("powerstats") / "trained_models"
+    if not trained_models_dir.exists():
+        trained_models_dir.mkdir()
     train, test = get_train_test_data_from_db()
 
     if "LSTM" in model_names:
@@ -22,11 +24,11 @@ def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
 
     for name, model in trained_models.items():
         logger.info("Training model: %s", name)
-        save_path = powerstats_dir / f"{name}_lifter_model"
+        save_path = trained_models_dir / f"{name}_lifter_model"
         if save_path.exists():
-            model.load_from(powerstats_dir / f"{name}_lifter_model")
-        model.train_model_auto(train, save_loc=powerstats_dir / f"{name}_lifter_model")
-        model.load_from(powerstats_dir / f"{name}_lifter_model")
+            model.load_from(trained_models_dir / f"{name}_lifter_model")
+        model.train_model_auto(train, save_loc=trained_models_dir / f"{name}_lifter_model")
+        model.load_from(trained_models_dir / f"{name}_lifter_model")
         logger.info("Evaluating model: %s", name)
         model.evaluate(test)
         trained_models[name] = model

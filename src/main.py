@@ -4,8 +4,6 @@ from typing import Any
 
 from src.analysis import distribution
 from src.database.database import Database
-from src.database.tables.dto_table.lifter import LifterTable
-from src.database.tables.dto_table.meet import MeetTable
 from src.database.tables.dto_table.result import ResultTable
 from src.database.tables.table import Table
 from src.models.ml.trainer import train_models
@@ -37,12 +35,9 @@ parser.add_argument(
 if __name__ == "__main__":
     args = parser.parse_args()
     logger.debug("args: %s", args)
-    database = Database()
-    lifter_table = LifterTable(database)
-    result_table = ResultTable(database)
-    meet_table = MeetTable(database)
-    all_tables: list[Table[Any]] = [lifter_table, result_table, meet_table]
     if args.display_database_heads:
+        database = Database()
+        all_tables: list[Table[Any]] = [ResultTable(database)]
         for table in all_tables:
             head = table.get_head()
             print(f"Head of {table.get_table_name()} table:\n")

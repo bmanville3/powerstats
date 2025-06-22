@@ -31,46 +31,6 @@ if not TABLE_DIR.exists():
 with open(f"{TABLE_DIR}/__init__.py", "w") as f:
     f.write("")
 
-meets = (
-    TableBuilder("meets", "Meet")
-    .add_column(
-        ColumnBuilder("meet_id", ColumnBuilder.Type.INTEGER)
-        .add_attribute(ColumnBuilder.Attribute.PRIMARY_KEY)
-        .add_attribute(ColumnBuilder.Attribute.AUTOINCREMENT)
-    )
-    .add_column(
-        ColumnBuilder("Federation", ColumnBuilder.Type.TEXT).add_attribute(
-            ColumnBuilder.Attribute.NOT_NULL
-        )
-    )
-    .add_column(ColumnBuilder("MeetCountry", ColumnBuilder.Type.TEXT))
-    .add_column(ColumnBuilder("MeetState", ColumnBuilder.Type.TEXT))
-    .add_column(ColumnBuilder("MeetName", ColumnBuilder.Type.TEXT))
-    .add_column(ColumnBuilder("Sanctioned", ColumnBuilder.Type.TEXT))
-    .add_column(ColumnBuilder("MeetType", ColumnBuilder.Type.TEXT))
-)
-
-lifters = (
-    TableBuilder("lifters", "Lifter")
-    .add_column(
-        ColumnBuilder("lifter_id", ColumnBuilder.Type.INTEGER)
-        .add_attribute(ColumnBuilder.Attribute.PRIMARY_KEY)
-        .add_attribute(ColumnBuilder.Attribute.AUTOINCREMENT)
-    )
-    .add_column(
-        ColumnBuilder("Name", ColumnBuilder.Type.TEXT)
-        .add_attribute(ColumnBuilder.Attribute.NOT_NULL)
-        .add_attribute(ColumnBuilder.Attribute.UNIQUE)
-    )
-    .add_column(
-        ColumnBuilder("Sex", ColumnBuilder.Type.TEXT).add_attribute(
-            ColumnBuilder.Attribute.NOT_NULL
-        )
-    )
-    .add_column(ColumnBuilder("Country", ColumnBuilder.Type.TEXT))
-    .add_column(ColumnBuilder("State", ColumnBuilder.Type.TEXT))
-)
-
 results = (
     TableBuilder("results", "Result")
     .add_column(
@@ -78,57 +38,23 @@ results = (
         .add_attribute(ColumnBuilder.Attribute.PRIMARY_KEY)
         .add_attribute(ColumnBuilder.Attribute.AUTOINCREMENT)
     )
-    .add_column(
-        ColumnBuilder("lifter_id", ColumnBuilder.Type.INTEGER).add_attribute(
-            ColumnBuilder.Attribute.NOT_NULL
-        ),
-        foreign_table="lifters",
-    )
-    .add_column(
-        ColumnBuilder("meet_id", ColumnBuilder.Type.INTEGER).add_attribute(
-            ColumnBuilder.Attribute.NOT_NULL
-        ),
-        foreign_table="meets",
-    )
-    .add_column(
-        ColumnBuilder("Event", ColumnBuilder.Type.TEXT).add_attribute(
-            ColumnBuilder.Attribute.NOT_NULL
-        )
-    )
-    .add_column(
-        ColumnBuilder("Equipment", ColumnBuilder.Type.TEXT).add_attribute(
-            ColumnBuilder.Attribute.NOT_NULL
-        )
-    )
-    .add_column(ColumnBuilder("Age", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("Division", ColumnBuilder.Type.TEXT))
-    .add_column(ColumnBuilder("BodyweightKg", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("WeightClassKg", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("Squat1Kg", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("Squat2Kg", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("Squat3Kg", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("Squat4Kg", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("Best3SquatKg", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("Bench1Kg", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("Bench2Kg", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("Bench3Kg", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("Bench4Kg", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("Best3BenchKg", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("Deadlift1Kg", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("Deadlift2Kg", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("Deadlift3Kg", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("Deadlift4Kg", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("Best3DeadliftKg", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("TotalKg", ColumnBuilder.Type.REAL))
-    .add_column(
-        ColumnBuilder("Place", ColumnBuilder.Type.TEXT).add_attribute(
-            ColumnBuilder.Attribute.NOT_NULL
-        )
-    )
-    .add_column(ColumnBuilder("Dots", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("Wilks", ColumnBuilder.Type.REAL))
-    .add_column(ColumnBuilder("Tested", ColumnBuilder.Type.TEXT))
+    .add_column(ColumnBuilder("Name", ColumnBuilder.Type.TEXT).add_attribute(ColumnBuilder.Attribute.NOT_NULL))
+    .add_column(ColumnBuilder("Sex", ColumnBuilder.Type.TEXT).add_attribute(ColumnBuilder.Attribute.NOT_NULL))
+    .add_column(ColumnBuilder("Age", ColumnBuilder.Type.REAL).add_attribute(ColumnBuilder.Attribute.NOT_NULL))
+    .add_column(ColumnBuilder("BodyweightKg", ColumnBuilder.Type.REAL).add_attribute(ColumnBuilder.Attribute.NOT_NULL))
+    .add_column(ColumnBuilder("Best3SquatKg", ColumnBuilder.Type.REAL).add_attribute(ColumnBuilder.Attribute.NOT_NULL))
+    .add_column(ColumnBuilder("Best3BenchKg", ColumnBuilder.Type.REAL).add_attribute(ColumnBuilder.Attribute.NOT_NULL))
+    .add_column(ColumnBuilder("Best3DeadliftKg", ColumnBuilder.Type.REAL).add_attribute(ColumnBuilder.Attribute.NOT_NULL))
+    .add_column(ColumnBuilder("TotalKg", ColumnBuilder.Type.REAL).add_attribute(ColumnBuilder.Attribute.NOT_NULL))
+    .add_column(ColumnBuilder("Wilks", ColumnBuilder.Type.REAL).add_attribute(ColumnBuilder.Attribute.NOT_NULL))
+    .add_column(ColumnBuilder("Dots", ColumnBuilder.Type.REAL).add_attribute(ColumnBuilder.Attribute.NOT_NULL))
+    .add_column(ColumnBuilder("Federation", ColumnBuilder.Type.TEXT).add_attribute(ColumnBuilder.Attribute.NOT_NULL))
+    .add_column(ColumnBuilder("Sanctioned", ColumnBuilder.Type.TEXT).add_attribute(ColumnBuilder.Attribute.NOT_NULL))
+    .add_column(ColumnBuilder("Place", ColumnBuilder.Type.TEXT).add_attribute(ColumnBuilder.Attribute.NOT_NULL))
+    .add_column(ColumnBuilder("Date", ColumnBuilder.Type.TEXT).add_attribute(ColumnBuilder.Attribute.NOT_NULL))
+    .add_column(ColumnBuilder("Tested", ColumnBuilder.Type.TEXT).add_attribute(ColumnBuilder.Attribute.NOT_NULL))
 )
+
 
 
 def format_with_ruff(file_path: str | Path) -> None:
@@ -148,19 +74,10 @@ model_import = """# THIS CLASS WAS GENERATE WITH generate_database_classes.py
 # ANYTHING YOU ADD HERE MAY BE OVERWRITTEN IN THE FUTURE
 from dataclasses import dataclass\n\n
 """
-with open(MODELS_DIR / "meet.py", "w") as f:
-    f.write(model_import)
-    f.write(meets.generate_python_class())
-    f.write("\n")
 
 with open(MODELS_DIR / "result.py", "w") as f:
     f.write(model_import)
     f.write(results.generate_python_class())
-    f.write("\n")
-
-with open(MODELS_DIR / "lifter.py", "w") as f:
-    f.write(model_import)
-    f.write(lifters.generate_python_class())
     f.write("\n")
 
 format_with_ruff(MODELS_DIR)
@@ -173,14 +90,6 @@ from typing import Type
 from src.database.tables.table import Comparator, Table
 {}\n\n
 """
-with open(TABLE_DIR / "meet.py", "w") as f:
-    f.write(
-        table_import.format(
-            f"from src.models.dto.meet import {meets._python_class_name}"
-        )
-    )
-    f.write(meets.generate_table_class())
-    f.write("\n")
 
 with open(TABLE_DIR / "result.py", "w") as f:
     f.write(
@@ -189,15 +98,6 @@ with open(TABLE_DIR / "result.py", "w") as f:
         )
     )
     f.write(results.generate_table_class())
-    f.write("\n")
-
-with open(TABLE_DIR / "lifter.py", "w") as f:
-    f.write(
-        table_import.format(
-            f"from src.models.dto.lifter import {lifters._python_class_name}"
-        )
-    )
-    f.write(lifters.generate_table_class())
     f.write("\n")
 
 format_with_ruff(TABLE_DIR)
