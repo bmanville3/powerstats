@@ -29,37 +29,70 @@ class LifterTable(Table[Lifter]):
         return self.get_all_from_attribute("Sex", value)
 
     def get_where_sex_ge(self, value: str) -> list[Lifter]:
-        return self.get_all_from_attributes_with_comparator((("Sex", Comparator.GE, value),))
+        return self.get_all_from_attributes_with_comparator(
+            (("Sex", Comparator.GE, value),)
+        )
 
     def get_where_sex_le(self, value: str) -> list[Lifter]:
-        return self.get_all_from_attributes_with_comparator((("Sex", Comparator.LE, value),))
+        return self.get_all_from_attributes_with_comparator(
+            (("Sex", Comparator.LE, value),)
+        )
 
-    def get_where_sex_in_range(self, lower_inclusive: str, upper_inclusive: str) -> list[Lifter]:
-        return self.get_all_from_attributes_with_comparator((("Sex", Comparator.GE, lower_inclusive), ("Sex", Comparator.LE, upper_inclusive)))
+    def get_where_sex_in_range(
+        self, lower_inclusive: str, upper_inclusive: str
+    ) -> list[Lifter]:
+        return self.get_all_from_attributes_with_comparator(
+            (
+                ("Sex", Comparator.GE, lower_inclusive),
+                ("Sex", Comparator.LE, upper_inclusive),
+            )
+        )
 
     def get_by_country(self, value: str) -> list[Lifter]:
         return self.get_all_from_attribute("Country", value)
 
     def get_where_country_ge(self, value: str) -> list[Lifter]:
-        return self.get_all_from_attributes_with_comparator((("Country", Comparator.GE, value),))
+        return self.get_all_from_attributes_with_comparator(
+            (("Country", Comparator.GE, value),)
+        )
 
     def get_where_country_le(self, value: str) -> list[Lifter]:
-        return self.get_all_from_attributes_with_comparator((("Country", Comparator.LE, value),))
+        return self.get_all_from_attributes_with_comparator(
+            (("Country", Comparator.LE, value),)
+        )
 
-    def get_where_country_in_range(self, lower_inclusive: str, upper_inclusive: str) -> list[Lifter]:
-        return self.get_all_from_attributes_with_comparator((("Country", Comparator.GE, lower_inclusive), ("Country", Comparator.LE, upper_inclusive)))
+    def get_where_country_in_range(
+        self, lower_inclusive: str, upper_inclusive: str
+    ) -> list[Lifter]:
+        return self.get_all_from_attributes_with_comparator(
+            (
+                ("Country", Comparator.GE, lower_inclusive),
+                ("Country", Comparator.LE, upper_inclusive),
+            )
+        )
 
     def get_by_state(self, value: str) -> list[Lifter]:
         return self.get_all_from_attribute("State", value)
 
     def get_where_state_ge(self, value: str) -> list[Lifter]:
-        return self.get_all_from_attributes_with_comparator((("State", Comparator.GE, value),))
+        return self.get_all_from_attributes_with_comparator(
+            (("State", Comparator.GE, value),)
+        )
 
     def get_where_state_le(self, value: str) -> list[Lifter]:
-        return self.get_all_from_attributes_with_comparator((("State", Comparator.LE, value),))
+        return self.get_all_from_attributes_with_comparator(
+            (("State", Comparator.LE, value),)
+        )
 
-    def get_where_state_in_range(self, lower_inclusive: str, upper_inclusive: str) -> list[Lifter]:
-        return self.get_all_from_attributes_with_comparator((("State", Comparator.GE, lower_inclusive), ("State", Comparator.LE, upper_inclusive)))
+    def get_where_state_in_range(
+        self, lower_inclusive: str, upper_inclusive: str
+    ) -> list[Lifter]:
+        return self.get_all_from_attributes_with_comparator(
+            (
+                ("State", Comparator.GE, lower_inclusive),
+                ("State", Comparator.LE, upper_inclusive),
+            )
+        )
 
     def get_by_unique_lifter_id(self, value: int) -> Lifter | None:
         results = self.get_all_from_attribute("lifter_id", value)
