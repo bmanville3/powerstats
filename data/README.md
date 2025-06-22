@@ -40,3 +40,9 @@ The metadata for this database is the same as the original raw data. Look under 
 ### Examples
 
 You can find example data under [`powerstats/data/sqlite/sqlite_example.md`](sqlite/sqlite_example.md).
+
+## usapl_drug_testing_results
+
+This folder contains drug testing results from USAPL doping database [https://www.usapowerlifting.com/drug-testing/](https://www.usapowerlifting.com/drug-testing/).
+In this folder, there is a collection of csv from 2018-2025 containing if lifters passed or failed a drug test.
+[get_known_ped_users.py](../scripts/get_known_ped_users.py) in the [`scripts/`](../scripts/) cross references these individuals with the open powerlifting database.
