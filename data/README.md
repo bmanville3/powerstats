@@ -22,10 +22,8 @@ You can find example data under [`powerstats/data/raw/raw_example.md`](raw/raw_e
 
 ### Generate the SQL Database
 
-After you have placed the raw data in [`powerstats/data/raw/`](raw/), go to [`powerstats/scripts/cleaning_pipeline.py`](../scripts/cleaning_pipeline.py). You may have to change the `CSV_FILE` variable to match the name of the downloaded dataset. Currently, it is set to
-`CSV_FILE = DATA_DIR / "raw/openpowerlifting-2025-05-31-c2a0b8b0.csv"`. Once everything is name correctly, run the script.
-
-To run the script, `cd` into the [`powerstats/scripts`](../scripts/) directory and run `python cleaning_pipeline.py`.
+After you have placed the raw data in [`powerstats/data/raw/`](raw/), run `python -m src.main --regenerate` to generate the database. You may have to change the `CSV_FILE` variable to match the name of the downloaded dataset. Currently, it is set to
+`CSV_FILE = DATA_DIR / "raw/openpowerlifting-2025-05-31-c2a0b8b0.csv"` in [`powerstats/src/utils/cleaning_pipeline.py`](../src/utils/cleaning_pipeline.py)
 
 ### Where to place the SQL database
 
@@ -44,8 +42,6 @@ You can find example data under [`powerstats/data/sqlite/sqlite_example.md`](sql
 ## usapl_drug_testing_results
 
 This folder contains drug testing results from USAPL doping database [https://www.usapowerlifting.com/drug-testing/](https://www.usapowerlifting.com/drug-testing/).
-In this folder, there is a collection of csv from 2018-2025 containing if lifters passed or failed a drug test. The data we are concerned with in each row is the
-lifter's name, if they passed or failed, and the date. [get_known_ped_users.py](../scripts/get_known_ped_users.py) in the [`scripts/`](../scripts/) cross references
-this data with the open powerlifting database to create testing data.
+In this folder, there is a collection of csv from 2018-2025 containing if lifters passed or failed a drug test. The data we are concerned with in each row is the lifter's name, if they passed or failed, and the date. The data from here is loaded and processed at run time, so there is no need to run anything beforehand.
 
 If you wish to see example data, open one of the csvs in the directory (they are quite small and easy to digest).

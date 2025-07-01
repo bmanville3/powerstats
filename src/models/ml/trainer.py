@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
-    graph_loc = POWERSTATS / "graphs/models/eval_set/"
+    graph_loc = POWERSTATS / "graphs/models/val_set/"
     graph_loc.mkdir(exist_ok=True, parents=True)
     trained_models_dir = POWERSTATS / "trained_models"
     trained_models_dir.mkdir(exist_ok=True)
@@ -32,11 +32,27 @@ def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
     tuned_models: dict[str, BaseNetwork] = {}
 
     # Hyperparameter grids
+    # for the initial LSTM using SGD optimizer and
+    # param_grid: dict[str, list[float | int]] = {
+    #     "hidden_size": [32, 64, 128, 200],
+    #     "num_layers": [1, 2, 3],
+    #     "dropout": [0.0, 0.1, 0.3],
+    #     "lr": [0.0001, 0.0005, 0.001, 0.01],
+    # }
+    # the best models on the full dataset (80/20 split) are (that I manually selected by F1 score > ~0.6 and accuracy > 0.56):
+    #
+    # hidden_size,num_layers,dropout,lr,f1,accuracy,precision,recall
+    # 200,1,0.0,0.001,0.6174961593089655,0.5721973675679181,0.5575971731448763,0.6918130744000259
+    # 128,1,0.0,0.001,0.618791449634247,0.565810802048888,0.5507562131076938,0.7060046114376644
+    # 200,2,0.1,0.001,0.6037984507475362,0.5614180120599105,0.5498159901861432,0.6695352839931153
+    # 200,2,0.0,0.01,0.5969201413216857,0.5617097840886986,0.5517250881834215,0.6501802357678693
+    #
+    # while not perfect, we will extrapolate these results for regular training (due to resource limitations in testing)
     param_grid: dict[str, list[float | int]] = {
-        "hidden_size": [32, 64, 128],
+        "hidden_size": [128, 200, 256],
         "num_layers": [1, 2],
-        "dropout": [0.0, 0.1, 0.3],
-        "lr": [0.0005, 0.001, 0.01],
+        "dropout": [0.0],
+        "lr": [0.001],
     }
     param_combinations = list(
             itertools.product(
@@ -49,14 +65,15 @@ def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     logger.info("Using device %s", device)
-
-    for model_name in list(model_names):  # copy to mutate safely
-        logger.info("Hyperparameter tuning for model: %s", model_name)
-        model_class = {
+    classes = {
             "LSTM": LifterLSTM,
             "RNN": LifterRNN,
             "Bidirectional_LSTM": LifterBiLSTM,
-        }.get(model_name)
+    }
+
+    for model_name in list(model_names):  # copy to mutate safely
+        logger.info("Hyperparameter tuning for model: %s", model_name)
+        model_class = classes.get(model_name)
 
         if model_class is None:
             logger.error("Unknown model: %s", model_name)
@@ -86,7 +103,7 @@ def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
                 device=device,
             )
             model.to(device)
-            optimizer = torch.optim.SGD(model.parameters(), lr=lr)
+            optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
             # Train model temporarily
             model.train_model(
@@ -94,14 +111,13 @@ def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
             )
             # Evaluate
             metrics = model.evaluate(test)
-            f1 = metrics["f1"]
             results.append(
                 {
                     "hidden_size": hidden_size,
                     "num_layers": num_layers,
                     "dropout": dropout,
                     "lr": lr,
-                    "f1": f1,
+                    "f1":  metrics["f1"],
                     "accuracy": metrics["accuracy"],
                     "precision": metrics["precision"],
                     "recall": metrics["recall"],
@@ -112,7 +128,7 @@ def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
         df = pd.DataFrame(results)
         df.to_csv(trained_models_dir / f"{model_name}_tuning_results.csv", index=False)
 
-        best_row = df.sort_values("f1", ascending=False).iloc[0]
+        best_row = df.sort_values("accuracy", ascending=False).iloc[0]
         logger.info("Best hyperparameters for %s: %s", model_name, best_row)
 
         # Retrain final model with best params
@@ -124,7 +140,7 @@ def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
             device=device,
         )
         best_model.to(device)
-        best_optimizer = torch.optim.SGD(best_model.parameters(), lr=best_row["lr"])
+        best_optimizer = torch.optim.Adam(best_model.parameters(), lr=best_row["lr"])
         best_model.train_model(
             train,
             best_optimizer,
@@ -147,7 +163,7 @@ def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
             f.write(f"Dropout: {float(best_row['dropout'])}\n")
             f.write(f"Learning Rate: {best_row['lr']:.4f}\n\n")
 
-            f.write("Final Evaluation on Test Set:\n")
+            f.write("Final Evaluation on Validation Set:\n")
             for metric, value in final_metrics.items():
                 if isinstance(value, torch.Tensor):
                     continue  # skip tensors like predictions/labels
@@ -172,13 +188,13 @@ def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
             plot_metrics_ordered.values(),
             color=["#4CAF50", "#2196F3", "#FFC107", "#FF5722"],
         )
-        plt.ylim(0, 1)
-        plt.title(f"{model_name} - Best Metric Scores")
+        plt.ylim(0, 1.1)
+        plt.title(f"{model_name} - Best Metric Scores on Validation Set")
         for i, (k, v) in enumerate(plot_metrics_ordered.items()):
             plt.text(i, v + 0.01, f"{v:.2f}", ha="center", va="bottom")
         plt.ylabel("Score")
         plt.xlabel(f"(Using drugs = class {IS_USING_LABEL})")
-        plt.savefig(graph_loc / f"{model_name}_best_metrics_bar.png")
+        plt.savefig(graph_loc / f"{model_name}_val_metrics_bar.png")
         plt.close()
 
     return tuned_models
@@ -292,8 +308,8 @@ def test_models(model_names: set[str]) -> None:
             plot_metrics.values(),
             color=["#4CAF50", "#2196F3", "#FFC107", "#FF5722"],
         )
-        plt.ylim(0, 1)
-        plt.title(f"{name} - Evaluation Metrics on Test Set")
+        plt.ylim(0, 1.1)
+        plt.title(f"{name} - Best Metric Scores on True Test Set")
         for i, (k, v) in enumerate(plot_metrics.items()):
             plt.text(i, v + 0.01, f"{v:.2f}", ha="center", va="bottom")
         plt.ylabel("Score")

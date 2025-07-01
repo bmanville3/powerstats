@@ -8,20 +8,18 @@ The goal of this project is to derive a data driven algorithm to predict drug-us
 
 ## Running Python Files
 
-It is recommend to run all files in this [`powerstats/src/`](./src/) directory with the `-m` flag. Python's module resolver can be frustrating sometimes when you try to run something directly. Running `python src/main.py` is almost certainly going to throw errors about not finding a package. To fix this, run `python -m src.main`. It is recommended to run all files in this directory from the `powerstats/` directory.
-
-The scripts in [`powerstats/scripts/`](./scripts/) should be directly runnable with `python {script_name}`. It is recommended to run these files directly in the `powerstats/scripts/` directory without the `-m` flag.
+It is recommend to run all files in this [`powerstats/src/`](./src/) as a module from the `powerstats/` directory. Python's module resolver can be frustrating sometimes when you try to run something directly. Running `python src/main.py` is almost certainly going to throw errors about not finding a package. To fix this, run `python -m src.main`.
 
 ## Getting started
 
 ### The Main File
-[`powerstats/src/main.py`](./src/main.py) is the main runner for this project. Please resort to it for running all analyses. Pass the `--help` flag when running it to see what all can be done. It is recommended to run it like `python -m src.main` from the `powerstats/` directory.
+[`powerstats/src/main.py`](./src/main.py) is the main runner for this project and has a CLI explaining components of the project. Please resort to it for running all analyses (run `python -m src.main --help` from `powerstats/` for help).
 
 ### Getting the dataset
 The dataset can be found at [https://openpowerlifting.gitlab.io/opl-csv/](https://openpowerlifting.gitlab.io/opl-csv/). For more information, see [`powerstats/data/README.md`](./data/README.md). For more links, see [`powerstats/data/raw/additional_links.md`](./data/raw/additional_links.md).
 
-### Scripts - Loading the Dataset
-Besides from `main.py`, there are also some scripts at [`powerstats/scripts/`](./scripts/) that must be run. The main script that need to be ran is [`powerstats/scripts/cleaning_pipeline.py`](./scripts/cleaning_pipeline.py) to load the dataset. For more information on loading the dataset, see [`powerstats/data/README.md`](./data/README.md). For more information on scripts, see [`powerstats/scripts/README.md`](./scripts/README.md).
+### Loading the Dataset
+ For information on loading the dataset, see [`powerstats/data/README.md`](./data/README.md).
 
 
 ### Dependencies
