@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from src.database.database import Database
 from src.database.tables.dto_table.result import ResultTable
 from src.models.dto.result import Result
-from src.utils import find_dir, get_lb_from_kg
+from src.utils.utils import find_dir, get_lb_from_kg
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +25,9 @@ def plot_all_distributions(results: list[Result], prefixes: list[str]) -> None:
     ]
 
     fig, axes = plt.subplots(2, 2, figsize=(15, 10))
-    fig.suptitle(f"{' - '.join(prefixes)} - Distribution of Lifts (Raw SBD)", fontsize=16)
+    fig.suptitle(
+        f"{' - '.join(prefixes)} - Distribution of Lifts (Raw SBD)", fontsize=16
+    )
 
     for ax, (attribute, xlabel) in zip(axes.flat, attributes):
         values = extract_valid([getattr(r, attribute) for r in results])

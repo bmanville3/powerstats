@@ -14,6 +14,9 @@ def find_dir(target: str) -> Path:
     return current / target
 
 
+POWERSTATS = find_dir("powerstats").absolute()
+
+
 def get_lb_from_kg(kg: float) -> float:
     return kg * KG_TO_LB
 

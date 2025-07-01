@@ -8,7 +8,7 @@ import logging
 import sqlite3
 from typing import Any, Sequence
 
-from src.utils import find_dir
+from src.utils.utils import find_dir
 
 logger = logging.getLogger(__name__)
 
