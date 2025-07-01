@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 logger = logging.getLogger(__name__)
 
 
-class BaseNetwork(ABC, nn.Module): # type: ignore
+class BaseNetwork(ABC, nn.Module):  # type: ignore
     def __init__(self, device: str | None = None):
         super().__init__()
         if device:
@@ -64,12 +64,12 @@ class BaseNetwork(ABC, nn.Module): # type: ignore
             correct = 0
             total = 0
             for batch in dataloader:
-                inputs, labels, *extra = batch
+                inputs, labels = batch
                 inputs = inputs.to(self.device).float()
                 labels = labels.to(self.device).float()
 
                 optimizer.zero_grad()
-                outputs = self(inputs, *extra) if extra else self(inputs)
+                outputs = self(inputs)
                 loss = loss_fn(outputs, labels)
                 loss.backward()
                 optimizer.step()
@@ -138,7 +138,6 @@ class BaseNetwork(ABC, nn.Module): # type: ignore
             results["loss"] = total_loss / len(dataloader)
         if metric_fn:
             results["metric"] = metric_fn(preds_tensor, labels_tensor)
-        print(results)
         return results
 
     def train_model_auto(

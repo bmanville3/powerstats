@@ -8,7 +8,7 @@ from torch.nn.utils.rnn import pack_padded_sequence
 from src.models.ml.base import BaseNetwork
 
 
-class LifterLSTM(BaseNetwork):
+class LifterRNN(BaseNetwork):
     def __init__(
         self,
         input_size: int,
@@ -18,7 +18,7 @@ class LifterLSTM(BaseNetwork):
         device: str | None = None,
     ) -> None:
         super().__init__(device)
-        self.lstm: nn.LSTM = nn.LSTM(
+        self.rnn = nn.RNN(
             input_size=input_size,
             hidden_size=hidden_size,
             num_layers=num_layers,
@@ -39,10 +39,9 @@ class LifterLSTM(BaseNetwork):
         packed = pack_padded_sequence(
             x, lengths.cpu(), batch_first=True, enforce_sorted=False
         )
-        _, (hn, _) = self.lstm(packed)
-        out: Tensor = hn[-1]  # (batch, hidden_size)
-        logits: Tensor = self.classifier(out).squeeze(1)  # (batch,)
-        return torch.sigmoid(logits)
+        _rnn_out, hidden = self.rnn(packed)
+        logits = self.classifier(hidden[0])  # (batch, 1)
+        return torch.sigmoid(logits.squeeze(1))  # (batch,)
 
     @override
     def get_optimizer(self) -> torch.optim.Optimizer:
