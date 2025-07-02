@@ -68,6 +68,17 @@ def count_labels(dataset: Dataset) -> Counter[float]:
 
     return label_counts
 
+def get_point_from_result(result: Result) -> list[float]:
+    return [
+            result.best3_bench_kg,
+            result.best3_deadlift_kg,
+            result.best3_squat_kg,
+            result.total_kg,
+            result.bodyweight_kg,
+            result.age,
+            1.0 if result.sex == "M" else 0.0,
+        ]
+
 
 def get_train_test_data_from_extracted(
     data: list[list[Result]],
@@ -78,18 +89,7 @@ def get_train_test_data_from_extracted(
         for i in range(len(list_results)):
             new_sequence = []
             for j in range(i + 1):
-                result = list_results[j]
-                new_sequence.append(
-                    [
-                        result.best3_bench_kg,
-                        result.best3_deadlift_kg,
-                        result.best3_squat_kg,
-                        result.total_kg,
-                        result.bodyweight_kg,
-                        result.age,
-                        1 if result.sex == "M" else 0,
-                    ]
-                )
+                new_sequence.append(get_point_from_result(list_results[j]))
             sequences.append(torch.tensor(new_sequence, dtype=torch.float32))
             if list_results[i].tested == "yes":
                 labels.append(IS_CLEAN_LABEL)

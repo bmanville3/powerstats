@@ -1,0 +1,11 @@
+Best Hyperparameters for Bidirectional_LSTM:
+Hidden Size: 128
+Num Layers: 2
+Dropout: 0.1
+Learning Rate: 0.0005
+
+Final Evaluation on Validation Set:
+Accuracy: 0.6003
+Precision: 0.5763
+Recall: 0.7527
+F1: 0.6528

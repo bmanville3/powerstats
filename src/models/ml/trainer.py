@@ -14,6 +14,7 @@ from src.models.ml.lifter_dataset import (
     IS_USING_LABEL,
     LifterDataset,
     collate_fn,
+    get_point_from_result,
     get_train_test_data_from_db,
 )
 from src.utils.known_ped_users import get_known_users
@@ -49,10 +50,10 @@ def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
     #
     # while not perfect, we will extrapolate these results for regular training (due to resource limitations in testing)
     param_grid: dict[str, list[float | int]] = {
-        "hidden_size": [128, 200, 256],
+        "hidden_size": [128, 200, 256, 384],
         "num_layers": [1, 2],
-        "dropout": [0.0],
-        "lr": [0.001],
+        "dropout": [0.0, 0.1],
+        "lr": [0.001, 0.0005],
     }
     param_combinations = list(
             itertools.product(
@@ -107,7 +108,7 @@ def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
 
             # Train model temporarily
             model.train_model(
-                train, optimizer, model.get_loss_fn(), epochs=8, save_loc=None
+                train, optimizer, model.get_loss_fn(), epochs=10, save_loc=None
             )
             # Evaluate
             metrics = model.evaluate(test)
@@ -212,18 +213,7 @@ def test_models(model_names: set[str]) -> None:
     for user, label in users:
         sequences.append(
             torch.tensor(
-                [
-                    [
-                        result.best3_bench_kg,
-                        result.best3_deadlift_kg,
-                        result.best3_squat_kg,
-                        result.total_kg,
-                        result.bodyweight_kg,
-                        result.age,
-                        1 if result.sex == "M" else 0,
-                    ]
-                    for result in user
-                ],
+                [get_point_from_result(result) for result in user],
                 dtype=torch.float32,
             )
         )

@@ -1,0 +1,11 @@
+Best Hyperparameters for LSTM:
+Hidden Size: 384
+Num Layers: 2
+Dropout: 0.0
+Learning Rate: 0.0005
+
+Final Evaluation on Validation Set:
+Accuracy: 0.5981
+Precision: 0.6229
+Recall: 0.4943
+F1: 0.5512
