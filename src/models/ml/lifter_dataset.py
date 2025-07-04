@@ -68,16 +68,17 @@ def count_labels(dataset: Dataset) -> Counter[float]:
 
     return label_counts
 
+
 def get_point_from_result(result: Result) -> list[float]:
     return [
-            result.best3_bench_kg,
-            result.best3_deadlift_kg,
-            result.best3_squat_kg,
-            result.total_kg,
-            result.bodyweight_kg,
-            result.age,
-            1.0 if result.sex == "M" else 0.0,
-        ]
+        result.best3_bench_kg,
+        result.best3_deadlift_kg,
+        result.best3_squat_kg,
+        result.total_kg,
+        result.bodyweight_kg,
+        result.age,
+        1.0 if result.sex == "M" else 0.0,
+    ]
 
 
 def get_train_test_data_from_extracted(

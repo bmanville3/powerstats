@@ -1,5 +1,7 @@
 import itertools
 import logging
+from pathlib import Path
+from typing import Any
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -56,20 +58,20 @@ def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
         "lr": [0.001, 0.0005],
     }
     param_combinations = list(
-            itertools.product(
-                param_grid["hidden_size"],
-                param_grid["num_layers"],
-                param_grid["dropout"],
-                param_grid["lr"],
-            )
+        itertools.product(
+            param_grid["hidden_size"],
+            param_grid["num_layers"],
+            param_grid["dropout"],
+            param_grid["lr"],
         )
+    )
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     logger.info("Using device %s", device)
     classes = {
-            "LSTM": LifterLSTM,
-            "RNN": LifterRNN,
-            "Bidirectional_LSTM": LifterBiLSTM,
+        "LSTM": LifterLSTM,
+        "RNN": LifterRNN,
+        "Bidirectional_LSTM": LifterBiLSTM,
     }
 
     for model_name in list(model_names):  # copy to mutate safely
@@ -85,7 +87,11 @@ def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
 
         for hidden_size, num_layers, dropout, lr in param_combinations:
             if num_layers <= 1 and dropout > 0.0:
-                logger.debug("Skipping param combo because num_layers=%s and dropout=%s", num_layers, dropout)
+                logger.debug(
+                    "Skipping param combo because num_layers=%s and dropout=%s",
+                    num_layers,
+                    dropout,
+                )
                 continue
             hidden_size = int(hidden_size)
             num_layers = int(num_layers)
@@ -118,7 +124,7 @@ def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
                     "num_layers": num_layers,
                     "dropout": dropout,
                     "lr": lr,
-                    "f1":  metrics["f1"],
+                    "f1": metrics["f1"],
                     "accuracy": metrics["accuracy"],
                     "precision": metrics["precision"],
                     "recall": metrics["recall"],
@@ -226,52 +232,9 @@ def test_models(model_names: set[str]) -> None:
     logger.info("Using device %s", device)
 
     for name in model_names:
-        hyperparam_path = trained_models_dir / f"{name}_hyperparameters.txt"
-        if not hyperparam_path.exists():
-            logger.error("Missing hyperparameter file for model %s", name)
-            continue
-
-        # Read hyperparameters from the text file
-        with open(hyperparam_path, "r") as f:
-            lines = f.readlines()
-
-        try:
-            hidden_size = int(lines[1].split(":")[1].strip())
-            num_layers = int(lines[2].split(":")[1].strip())
-            dropout = float(lines[3].split(":")[1].strip())
-            _lr = float(lines[4].split(":")[1].strip())
-        except (IndexError, ValueError) as e:
-            logger.error("Could not parse hyperparameters for model %s: %s", name, e)
-            continue
-
-        model_class = {
-            "LSTM": LifterLSTM,
-            "RNN": LifterRNN,
-            "Bidirectional_LSTM": LifterBiLSTM,
-        }.get(name)
-
-        if model_class is None:
-            logger.error("Unknown model name: %s", name)
-            continue
-
-        model: BaseNetwork = model_class(
-            input_size=7,
-            hidden_size=hidden_size,
-            num_layers=num_layers,
-            dropout=dropout,
-            device=device,
-        )
-        model.to(device)
-
-        save_path = trained_models_dir / f"{name}_lifter_model"
-        if save_path.exists():
-            model.load_from(save_path)
-        else:
-            logger.error(
-                "Could not find saved model weights at %s for %s. Skipping evaluation.",
-                save_path,
-                name,
-            )
+        model = load_best_model(name, trained_models_dir, device)
+        if model is None:
+            logger.error("Could not get model %s", name)
             continue
 
         logger.info("Evaluating model: %s", name)
@@ -305,3 +268,56 @@ def test_models(model_names: set[str]) -> None:
         plt.ylabel("Score")
         plt.savefig(graph_loc / f"{name}_test_metrics_bar.png")
         plt.close()
+
+
+def load_best_model(
+    model_name: str, trained_models_dir: Path, device: Any
+) -> BaseNetwork | None:
+    hyperparam_path = trained_models_dir / f"{model_name}_hyperparameters.txt"
+    if not hyperparam_path.exists():
+        logger.error("Missing hyperparameter file for model %s", model_name)
+        return None
+
+    # Read hyperparameters from the text file
+    with open(hyperparam_path, "r") as f:
+        lines = f.readlines()
+
+    try:
+        hidden_size = int(lines[1].split(":")[1].strip())
+        num_layers = int(lines[2].split(":")[1].strip())
+        dropout = float(lines[3].split(":")[1].strip())
+        _lr = float(lines[4].split(":")[1].strip())
+    except (IndexError, ValueError) as e:
+        logger.error("Could not parse hyperparameters for model %s: %s", model_name, e)
+        return None
+
+    model_class = {
+        "LSTM": LifterLSTM,
+        "RNN": LifterRNN,
+        "Bidirectional_LSTM": LifterBiLSTM,
+    }.get(model_name)
+
+    if model_class is None:
+        logger.error("Unknown model name: %s", model_name)
+        return None
+
+    model: BaseNetwork = model_class(
+        input_size=7,
+        hidden_size=hidden_size,
+        num_layers=num_layers,
+        dropout=dropout,
+        device=device,
+    )
+    model.to(device)
+
+    save_path = trained_models_dir / f"{model_name}_lifter_model"
+    if save_path.exists():
+        model.load_from(save_path)
+    else:
+        logger.error(
+            "Could not find saved model weights at %s for %s. Skipping evaluation.",
+            save_path,
+            model_name,
+        )
+        return None
+    return model

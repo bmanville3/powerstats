@@ -15,6 +15,11 @@ It is recommend to run all files in this [`powerstats/src/`](./src/) as a module
 ### The Main File
 [`powerstats/src/main.py`](./src/main.py) is the main runner for this project and has a CLI explaining components of the project. Please resort to it for running all analyses (run `python -m src.main --help` from `powerstats/` for help).
 
+### The GUI
+[`powerstats/src/gui.py`](./src/gui.py) will run a GUI to input user data into. The GUI is easy to use and self documenting. Simply enter each result from a user as the fields request, select which model to use, and click the "Calculate" button. This will run the inputted data through the selected model and output a probability from 0 to 1 of the user using drugs.
+
+Note: A date is asked to be inputted with each result, but the date itself does not matter as long as they give the correct ordering of results. That is, if Y happened before X, then it should be date(Y) is before date(X) but it does not matter exactly what date(Y) or date(X) is.
+
 ### Getting the dataset
 The dataset can be found at [https://openpowerlifting.gitlab.io/opl-csv/](https://openpowerlifting.gitlab.io/opl-csv/). For more information, see [`powerstats/data/README.md`](./data/README.md). For more links, see [`powerstats/data/raw/additional_links.md`](./data/raw/additional_links.md).
 
