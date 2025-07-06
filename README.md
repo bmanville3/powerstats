@@ -47,6 +47,10 @@ pre-commit install
 pre-commit run --all-files
 ```
 
+## Results from the Models
+
+Graphical results from the models can be found at [`powerstats/graphs/models/`](./graphs/models/). For an explanation of the results, see [`powerstats/graphs/models/README.md`](./graphs/models/README.md).
+
 ## License
 
 This page uses data from the OpenPowerlifting project, https://www.openpowerlifting.org.

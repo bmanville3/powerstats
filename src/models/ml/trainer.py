@@ -266,6 +266,7 @@ def test_models(model_names: set[str]) -> None:
         for i, (k, v) in enumerate(plot_metrics.items()):
             plt.text(i, v + 0.01, f"{v:.2f}", ha="center", va="bottom")
         plt.ylabel("Score")
+        plt.xlabel(f"(Using drugs = class {IS_USING_LABEL})")
         plt.savefig(graph_loc / f"{name}_test_metrics_bar.png")
         plt.close()
 

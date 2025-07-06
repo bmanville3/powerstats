@@ -27,16 +27,16 @@ hidden_size,num_layers,dropout,lr,f1,accuracy,precision,recall
 While not perfect, we will extrapolate these results for regular training (due to resource limitations in testing). That is, instead of running the full param_grid sweep again for every model, we will only run
 ```
 param_grid: dict[str, list[float | int]] = {
-    "hidden_size": [128, 200, 256],
+    "hidden_size": [128, 200, 256, 384],
     "num_layers": [1, 2],
-    "dropout": [0.0],
-    "lr": [0.001],
+    "dropout": [0.0, 0.1],
+    "lr": [0.001, 0.0005],
 }
 ```
 Additionally, the original optimizer used was SGD, but the new optimizer used will be Adam.
 ### Justification for the new param grid
 * The better models tend to have higher complexity ($\text{size}\geq 128$).
 * Having more than 2 layers led to bad results.
-* The dropout parameter did not change much.
-* Setting the learning rate lower/higher tended to not make results better
+* The dropout parameter did not change much so tested less configurations.
+* A learning rate of 0.001 seemed to be around the best.
 * While SGD was used at first, playing around with Adam instantly spiked the accuracy by 2-3%. Changing the optimizer does draw question to if the results are valid, but we will have to live with it as rerunning the full sweep would take too long.
