@@ -1,8 +1,10 @@
 # These have been tested
 matplotlib == 3.10.3
 numpy == 2.2.6
+openai==1.90.0
 pandas == 2.2.3
 pre-commit == 4.2.0
+python-dotenv==1.1.0
 scikit-learn==1.7.0
 tk==0.1.0
 # optionally do this with cuda
