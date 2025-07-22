@@ -55,9 +55,10 @@ class BaseNetwork(ABC, nn.Module):  # type: ignore
         scheduler: torch.optim.lr_scheduler.LRScheduler | None = None,
         verbose: bool = True,
         save_loc: str | Path | None = None,
-    ) -> None:
+    ) -> list[float]:
         self.train()
         best = float("inf")
+        losses: list[float] = []
         for epoch in range(epochs):
             logger.info("Starting epoch %d/%d", epoch + 1, epochs)
             total_loss = 0.0
@@ -85,6 +86,7 @@ class BaseNetwork(ABC, nn.Module):  # type: ignore
                 scheduler.step()
 
             avg_loss = total_loss / len(dataloader)
+            losses.append(avg_loss)
             if verbose:
                 accuracy = correct / total if total > 0 else 0.0
                 logger.info(
@@ -94,6 +96,7 @@ class BaseNetwork(ABC, nn.Module):  # type: ignore
                 best = avg_loss
                 logger.info("Saving new best model to %s", save_loc)
                 self.save_to(save_loc, True)
+        return losses
 
     def evaluate(
         self,
@@ -146,9 +149,9 @@ class BaseNetwork(ABC, nn.Module):  # type: ignore
         epochs: int = 10,
         verbose: bool = True,
         save_loc: str | Path | None = None,
-    ) -> None:
+    ) -> list[float]:
         optimizer = self.get_optimizer()
-        self.train_model(
+        return self.train_model(
             dataloader,
             self.get_optimizer(),
             self.get_loss_fn(),

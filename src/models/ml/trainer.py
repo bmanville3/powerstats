@@ -28,6 +28,8 @@ logger = logging.getLogger(__name__)
 def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
     graph_loc = POWERSTATS / "graphs/models/val_set/"
     graph_loc.mkdir(exist_ok=True, parents=True)
+    loss_graph_loc = POWERSTATS / "graphs/models/train_loss/"
+    loss_graph_loc.mkdir(exist_ok=True, parents=True)
     trained_models_dir = POWERSTATS / "trained_models"
     trained_models_dir.mkdir(exist_ok=True)
 
@@ -148,13 +150,20 @@ def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
         )
         best_model.to(device)
         best_optimizer = torch.optim.Adam(best_model.parameters(), lr=best_row["lr"])
-        best_model.train_model(
+        losses = best_model.train_model(
             train,
             best_optimizer,
             best_model.get_loss_fn(),
             epochs=20,
             save_loc=trained_models_dir / f"{model_name}_lifter_model",
         )
+        plt.figure(figsize=(8, 5))
+        plt.plot(list(range(1, len(losses) + 1)), losses)
+        plt.title(f"{model_name} - BCE Loss vs Epoch")
+        plt.ylabel("BCE Loss")
+        plt.xlabel("Epoch")
+        plt.savefig(loss_graph_loc / f"{model_name}_loss_vs_epoch.png")
+        plt.close()
         best_model.load_from(trained_models_dir / f"{model_name}_lifter_model")
         tuned_models[model_name] = best_model
 

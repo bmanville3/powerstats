@@ -1,3 +1,4 @@
+import logging
 import os
 import tkinter as tk
 from dataclasses import dataclass
@@ -363,6 +364,7 @@ give a likely hood on a scale 1-10 of how likely they are to be using performanc
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     root = tk.Tk()
     app = ResultEntryApp(root)
     root.mainloop()
