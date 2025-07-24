@@ -1,0 +1,15 @@
+### Performance Analysis
+
+The lifter shows a notable upward trend in total lift weight over time. Starting from a total of 700.0 kg in November 2018, the lifter increased their total by 102.5 kg to 802.5 kg by February 2022. This represents a gain of approximately 14.6% over the span of just over three years, which is a significant improvement especially considering that they began with a considerable total.
+
+Examining the individual lifts (squat, bench press, deadlift), there has been consistent improvement in each discipline, with the squats increasing from 240.0 kg to 282.5 kg and the deadlifts from 295.0 kg to 332.5 kg. The lifter’s bodyweight also saw an increase, particularly a jump to 120.4 kg in March 2020, suggesting a potential focus on gaining mass along with strength, which is not uncommon in powerlifting.
+
+While the lifter's performance progression is impressive, particularly the weight increase in their later lifts, several factors might raise suspicion regarding drug use:
+
+1. **Rate of Improvement**: The jump from 740.0 kg to 765.0 kg (25 kg increase) and then to 802.5 kg (37.5 kg increase) within a shorter timeframe (from August 2019 to February 2022) could suggest an accelerated rate of improvement, which might be atypical for natural lifters.
+
+2. **Bodyweight Increase**: A significant rise in bodyweight to 120.4 kg could imply either strategic weight gain for powerlifting or a possible impact of using performance-enhancing substances. A rapid increase in both bodyweight and performance can sometimes correlate with drug use.
+
+Overall, while improvements in powerlifting can occur due to dedication and training, the combination of rapid performance increases and bodyweight changes raises some flags. Therefore, based on the provided data and the context of the performance increases, there is a moderate level of suspicion regarding potential drug use.
+
+**Likelihood Rating: 6/10**

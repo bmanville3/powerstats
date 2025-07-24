@@ -1,61 +1,18 @@
 import logging
-import os
 import tkinter as tk
-from dataclasses import dataclass
 from datetime import datetime
 from tkinter import messagebox, scrolledtext, simpledialog, ttk
 
-import openai
 import torch
-from dotenv import load_dotenv
 
-from src.models.dto.result import Result
+from src.llm_interface import OPENAI_MODEL, dot_env_is_validish, summarize_data
 from src.models.ml.base import BaseNetwork
 from src.models.ml.lifter_dataset import get_point_from_result
 from src.models.ml.trainer import load_best_model
+from src.result_subset import ResultSubset
 from src.utils.utils import POWERSTATS
 
-load_dotenv(POWERSTATS / "openai_config.env")
-
-api_key: str | None = os.getenv("API_KEY")
-api_base: str | None  = os.getenv("API_BASE")
-openai_model: str | None  = os.getenv("OPENAI_MODEL")
 STANDARD_PADDING: int = 5
-
-@dataclass
-class ResultSubset:
-    best3_bench_kg: float
-    best3_deadlift_kg: float
-    best3_squat_kg: float
-    total_kg: float
-    bodyweight_kg: float
-    age: float
-    sex: str
-    date: str
-
-    def to_partial_result(self) -> Result:
-        return Result(
-            result_id=None, # type: ignore
-            name=None, # type: ignore
-            sex=self.sex,
-            age=self.age,
-            bodyweight_kg=self.bodyweight_kg,
-            best3_bench_kg=self.best3_bench_kg,
-            best3_deadlift_kg=self.best3_deadlift_kg,
-            best3_squat_kg=self.best3_squat_kg,
-            wilks=None, # type: ignore
-            dots=None, # type: ignore
-            federation=None, # type: ignore
-            place=None, # type: ignore
-            tested=None, # type: ignore
-            total_kg=self.total_kg,
-            date=self.date,
-            sanctioned=None, # type: ignore
-        )
-
-    def __str__(self) -> str:
-        return f"Date {self.date}. Total {self.total_kg}kg. Age {self.age}. Bodyweight {self.bodyweight_kg}kg. Sex {self.sex}. S/B/D {self.best3_squat_kg}/{self.best3_bench_kg}/{self.best3_deadlift_kg} (kgs)."
-
 
 class ResultEntryApp:
     def __init__(self, root: tk.Tk):
@@ -167,7 +124,7 @@ class ResultEntryApp:
         llm_frame.grid(row=0, column=4, columnspan=2, rowspan=10, padx=STANDARD_PADDING, pady=STANDARD_PADDING, sticky="nsew")
 
         # Inside LLM Frame
-        llm_model_label = tk.Label(llm_frame, text=f"LLM Model: {openai_model}")
+        llm_model_label = tk.Label(llm_frame, text=f"LLM Model: {OPENAI_MODEL}")
         llm_model_label.pack(anchor="w")
 
         summarize_button = tk.Button(llm_frame, text="Summarize Data", command=self.summarize_data)
@@ -201,8 +158,8 @@ class ResultEntryApp:
 
     # Then add this method to the class:
     def summarize_data(self) -> None:
-        if openai_model is None or openai_model == "NO_MODEL_SELECTED":
-            messagebox.showinfo("No model selected", "Please enter the LLM model you would like to use in 'powerstats/openai_config.env'")
+        if not dot_env_is_validish():
+            messagebox.showerror("Invalid config", "Please enter in the appropriate fields to 'powerstats/openai_config.env' to configure the LLM server")
             return
 
         if not self.results:
@@ -210,24 +167,13 @@ class ResultEntryApp:
             return
 
         try:
-            client = openai.OpenAI(api_key=api_key, base_url=api_base)
-
-            prompt = f"""Given this sequence of data entries:\n{self.results}\n\n
-Write a short analysis of the lifter's performance over time.
-Particularly, pay attention to if the lifter seems suspicious of drug use. Pay close attention to if both their
-rate of performance seems too fast and if their absolute performance is too high. After analyzing the data,
-give a likely hood on a scale 1-10 of how likely they are to be using performance enhancing drugs.
-1/10 means very unlikely to be using drugs, 10/10 means almost certainly using drugs. Please add you reading like <rating>/10."""
-
-            response = client.responses.create(
-                model=openai_model,
-                instructions="You are a referee at a powerlifting competition responsible for drug testing.",
-                input=prompt,
-            )
+            response = summarize_data(self.results)
+            if response is None:
+                raise ValueError("Got a None response. Is the LLM online?")
 
             self.llm_output.config(state=tk.NORMAL)
             self.llm_output.delete("1.0", tk.END)
-            self.llm_output.insert(tk.END, response.output_text)
+            self.llm_output.insert(tk.END, response)
             self.llm_output.config(state=tk.DISABLED)
 
         except Exception as e:

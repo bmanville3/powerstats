@@ -1,0 +1,13 @@
+The data presents five entries for a male lifter over a span of just over two years.
+
+1. **Performance Progression**: The lifter shows a significant increase in total weight lifted from 580.0kg in October 2017 to 667.5kg in July 2019, marking an increase of 87.5kg. Furthermore, there is a considerable jump from 647.5kg in January 2019 to 667.5kg later that year. This rapid progression, particularly within a six-month span, raises concerns regarding the rate of improvement, as a 40kg increase in total lift over this period is notable.
+
+2. **Bodyweight Considerations**: The lifter's bodyweight increased from 81.8kg to approximately 93.8kg over the same time frame, indicating a significant muscle gain, although it may suggest excessive weight gain for the improvements seen in lifts. The lifter’s increases in squat (S), bench (B), and deadlift (D) are also notable, particularly the deadlift increase from 232.5kg to 272.5kg, which is an increase of 40kg in less than two years.
+
+3. **Age and Trends**: The lifter's age (34.5 years) at the time of the highest total lifted should also be considered, as recovery and natural testosterone levels may be declining. Many lifters tend to peak in their late 20s to early 30s, and an increase like this at 34.5 may be less typical without assistance.
+
+4. **Performance Comparison**: The lifter's total lift of 667.5kg at a bodyweight of 93.8kg reflects a competitive performance level, suggesting an advanced state of training. However, the ranges in total lifted weights, especially with one lower entry of 447.5kg, indicate variability that could align with day-to-day performance but still raises questions.
+
+Taking into account the rapid increase in performance, the significant lift totals relative to bodyweight, and the age factor, there is a level of suspicion regarding potential drug use.
+
+Overall, I would rate this lifter’s likelihood of utilizing performance-enhancing drugs at **7/10**.

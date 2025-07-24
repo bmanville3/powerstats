@@ -1,0 +1,15 @@
+The lifter in question shows a significant progression in performance between the two data points collected over nearly a year apart.
+
+- **Date 2018-11-03**: The lifter totalled 595.0 kg at the age of 17, with a bodyweight of 97.0 kg. The individual exhibited lifts of 210.0 kg in squat, 127.5 kg in bench press, and 257.5 kg in deadlift.
+- **Date 2019-10-26**: By age 18, the lifter's total increased to 700.0 kg, with bodyweight rising to 118.75 kg. This includes lifts of 277.5 kg in squat, 150.0 kg in bench press, and 272.5 kg in deadlift.
+
+### Performance Analysis:
+1. **Improvement**: The lifter's total increased by 105.0 kg, which translates to an impressive increase of approximately 17.6% in total weight lifted within one year.
+2. **Relative Performance**: The increase in bodyweight from 97.0 kg to 118.75 kg also correlates with the increase in lifting totals; however, the rate of performance improvement seems notably high given the age and competitive level.
+3. **Age Factor**: At 17 years old, the lifter is still in a developmental stage, where gains can be made swiftly, but such a drastic improvement raises questions.
+4. **Absolute Performance**: The total lifted (700.0 kg) at 18 years old, especially with a bodyweight of 118.75 kg, positions the lifter above typical norms for natural athletes in this category.
+
+### Conclusion:
+Given the sharp increase in total weight lifted, relative performance improvements, and absolute performance levels that are significant for the lifter's age and weight category, there are red flags that may suggest possible use of performance-enhancing drugs.
+
+**Likelihood of Drug Use**: 8/10

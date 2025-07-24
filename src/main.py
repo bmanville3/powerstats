@@ -6,6 +6,7 @@ from src.analysis import distribution
 from src.database.database import Database
 from src.database.tables.dto_table.result import ResultTable
 from src.database.tables.table import Table
+from src.llm_interface import test_llm
 from src.models.ml.trainer import test_models, train_models
 from src.utils.cleaning_pipeline import generate_database
 from src.utils.database_classes import generate_database_classes
@@ -48,6 +49,9 @@ parser.add_argument(
 parser.add_argument(
     "--regenerate", action="store_true", help="Regenerates the database and dto classes"
 )
+parser.add_argument(
+    "--test_llm", action="store_true", help="Tests the LLM on the true test data"
+)
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -81,3 +85,5 @@ if __name__ == "__main__":
             models_to_test: set[str] = set(args.test)
             logger.info("Attempting to test the following models: %s", models_to_test)
             test_models(models_to_test)
+    if args.test_llm:
+        test_llm()
