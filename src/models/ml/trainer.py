@@ -150,18 +150,24 @@ def train_models(model_names: set[str]) -> dict[str, BaseNetwork]:
         )
         best_model.to(device)
         best_optimizer = torch.optim.Adam(best_model.parameters(), lr=best_row["lr"])
-        losses = best_model.train_model(
+        training_losses, validation_losses = best_model.train_model(
             train,
             best_optimizer,
             best_model.get_loss_fn(),
             epochs=20,
             save_loc=trained_models_dir / f"{model_name}_lifter_model",
+            val_dataloader=test
         )
         plt.figure(figsize=(8, 5))
-        plt.plot(list(range(1, len(losses) + 1)), losses)
+        plt.plot(list(range(1, len(training_losses) + 1)), training_losses, label="Training Loss")
+        if validation_losses:
+            plt.plot(list(range(1, len(validation_losses) + 1)), validation_losses, label="Validation Loss")
+        else:
+            logger.error("Expected validation losses to not be None but was. Not plotting validation losses")
         plt.title(f"{model_name} - BCE Loss vs Epoch")
         plt.ylabel("BCE Loss")
         plt.xlabel("Epoch")
+        plt.legend()
         plt.savefig(loss_graph_loc / f"{model_name}_loss_vs_epoch.png")
         plt.close()
         best_model.load_from(trained_models_dir / f"{model_name}_lifter_model")

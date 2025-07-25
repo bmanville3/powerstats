@@ -55,15 +55,19 @@ class BaseNetwork(ABC, nn.Module):  # type: ignore
         scheduler: torch.optim.lr_scheduler.LRScheduler | None = None,
         verbose: bool = True,
         save_loc: str | Path | None = None,
-    ) -> list[float]:
+        val_dataloader: DataLoader | None = None,
+    ) -> tuple[list[float], list[float] | None]:
         self.train()
         best = float("inf")
-        losses: list[float] = []
+        losses_training: list[float] = []
+        loss_validation: list[float] = []
+
         for epoch in range(epochs):
             logger.info("Starting epoch %d/%d", epoch + 1, epochs)
             total_loss = 0.0
             correct = 0
             total = 0
+
             for batch in dataloader:
                 inputs, labels = batch
                 inputs = inputs.to(self.device).float()
@@ -86,17 +90,44 @@ class BaseNetwork(ABC, nn.Module):  # type: ignore
                 scheduler.step()
 
             avg_loss = total_loss / len(dataloader)
-            losses.append(avg_loss)
+            losses_training.append(avg_loss)
+            accuracy = correct / total if total > 0 else 0.0
+
             if verbose:
-                accuracy = correct / total if total > 0 else 0.0
                 logger.info(
-                    f"Epoch {epoch + 1}/{epochs}, Loss: {avg_loss:.4f}, Accuracy: {accuracy:.4f}"
+                    f"Epoch {epoch + 1}/{epochs}, Train Loss: {avg_loss:.4f}, Train Accuracy: {accuracy:.4f}"
                 )
-            if save_loc and avg_loss < best:
-                best = avg_loss
+
+            # Validation phase (if applicable)
+            val_loss = None
+            if val_dataloader:
+                self.eval()
+                with torch.no_grad():
+                    val_total_loss = 0.0
+                    for batch in val_dataloader:
+                        inputs, labels = batch
+                        inputs = inputs.to(self.device).float()
+                        labels = labels.to(self.device).float()
+                        outputs = self(inputs)
+                        loss = loss_fn(outputs, labels)
+                        val_total_loss += loss.item()
+                    val_loss = val_total_loss / len(val_dataloader)
+                loss_validation.append(val_loss)
+                if verbose:
+                    logger.info(
+                        f"Epoch {epoch + 1}/{epochs}, Validation Loss: {val_loss:.4f}"
+                    )
+
+                self.train()
+
+            # Determine best loss for saving
+            current_loss = val_loss if val_loss is not None else avg_loss
+            if save_loc and current_loss < best:
+                best = current_loss
                 logger.info("Saving new best model to %s", save_loc)
                 self.save_to(save_loc, True)
-        return losses
+
+        return (losses_training, None) if val_dataloader is None else (losses_training, loss_validation)
 
     def evaluate(
         self,
@@ -149,7 +180,7 @@ class BaseNetwork(ABC, nn.Module):  # type: ignore
         epochs: int = 10,
         verbose: bool = True,
         save_loc: str | Path | None = None,
-    ) -> list[float]:
+    ) -> tuple[list[float], list[float] | None]:
         optimizer = self.get_optimizer()
         return self.train_model(
             dataloader,
